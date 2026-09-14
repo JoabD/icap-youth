@@ -1,0 +1,188 @@
+.receipt-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 0;
+  color: #616161;
+}
+
+.cancelled-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffebee;
+  color: #b71c1c;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.cards-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.receipt-card {
+  border: 1px solid #cfd8dc;
+  border-radius: 12px;
+  padding: 20px 24px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+  &.cancelled {
+    opacity: 0.7;
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px dashed #cfd8dc;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+
+  .brand h2 {
+    margin: 0;
+    color: #1a237e;
+  }
+
+  .subtitle {
+    color: #757575;
+    font-size: 0.85rem;
+  }
+}
+
+.copy-chip {
+  background: #e8eaf6 !important;
+  color: #1a237e !important;
+  font-weight: 600;
+
+  &--copy {
+    background: #fff3e0 !important;
+    color: #e65100 !important;
+  }
+}
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.details {
+  flex: 1 1 260px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  .label {
+    color: #757575;
+    font-size: 0.85rem;
+  }
+
+  .value {
+    font-weight: 500;
+
+    &.folio {
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+    }
+  }
+}
+
+.total-row .total {
+  font-size: 1.1rem;
+  color: #1a237e;
+  font-weight: 700;
+}
+
+.status--cancelled {
+  color: #b71c1c;
+}
+
+.qr-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.qr-caption {
+  font-size: 0.75rem;
+  color: #757575;
+}
+
+.signatures {
+  display: flex;
+  justify-content: space-around;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.signature-slot {
+  flex: 1;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #616161;
+}
+
+.signature-line {
+  border-top: 1px solid #616161;
+  margin-bottom: 6px;
+  height: 32px;
+}
+
+/*
+ * Layout de impresión: se ocultan navegación/botones, y las dos tarjetas
+ * (Original y Copia) se fuerzan a ocupar toda la hoja evitando que una
+ * quede cortada entre páginas, dejando el espacio de firmas listo.
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .receipt-page {
+    max-width: none;
+    padding: 0;
+  }
+
+  .cards-wrapper {
+    gap: 12mm;
+  }
+
+  .receipt-card {
+    box-shadow: none;
+    border: 1px solid #000;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .copy-chip {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

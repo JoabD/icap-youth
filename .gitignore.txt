@@ -1,0 +1,16 @@
+@"
+# .NET
+backend/**/bin/
+backend/**/obj/
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE / OS
+.vs/
+.idea/
+*.user
+.DS_Store
+"@ | Out-File -Encoding utf8 .gitignore

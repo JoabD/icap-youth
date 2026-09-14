@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Icap.Infrastructure</RootNamespace>
+    <AssemblyName>Icap.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Driver oficial de MongoDB para C# -->
+    <PackageReference Include="MongoDB.Driver" Version="2.29.0" />
+    <!-- Hashing de contraseñas -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- Generación/validación de JWT -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Icap.Domain\Icap.Domain.csproj" />
+    <ProjectReference Include="..\Icap.Application\Icap.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,33 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: icap-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - icap_mongo_data:/data/db
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Icap.WebApi/Dockerfile
+    container_name: icap-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - MongoDbSettings__ConnectionString=mongodb://mongo:27017
+      - MongoDbSettings__DatabaseName=IcapJuvenilDb
+      - JwtSettings__Secret=CHANGE_ME_TO_A_LONG_RANDOM_SECRET_FOR_LOCAL_DEV_ONLY
+      - JwtSettings__Issuer=IcapJuvenil.Api
+      - JwtSettings__Audience=IcapJuvenil.Client
+      - Cors__AllowedOrigins__0=http://localhost:4200
+      - Seed__EnableInitialSeed=true
+
+volumes:
+  icap_mongo_data:

@@ -1,0 +1,23 @@
+/* Estilos globales de la aplicación ICAP Juvenil */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Utilidad global reutilizable por cualquier vista imprimible */
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+}

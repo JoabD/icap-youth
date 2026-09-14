@@ -1,0 +1,83 @@
+<div class="list-page">
+  <div class="toolbar">
+    <h1>Recibos {{ isAdmin() ? '(todos)' : '(míos)' }}</h1>
+    <a mat-flat-button color="primary" routerLink="/admin/receipts/new">
+      <mat-icon>add</mat-icon>
+      Nuevo recibo
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-container">
+      <mat-spinner diameter="40" />
+      <p>Cargando recibos…</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-container">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else if (!hasReceipts()) {
+    <div class="state-container">
+      <mat-icon>inbox</mat-icon>
+      <p>Aún no se han emitido recibos.</p>
+    </div>
+  } @else {
+    <table mat-table [dataSource]="receipts()" class="receipts-table">
+      <ng-container matColumnDef="folioNumber">
+        <th mat-header-cell *matHeaderCellDef>Folio</th>
+        <td mat-cell *matCellDef="let r">{{ r.folioNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="delegateName">
+        <th mat-header-cell *matHeaderCellDef>Delegado</th>
+        <td mat-cell *matCellDef="let r">{{ r.delegateName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="areaOrRegion">
+        <th mat-header-cell *matHeaderCellDef>Área / Región</th>
+        <td mat-cell *matCellDef="let r">{{ r.areaOrRegion }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="wristbandsQuantity">
+        <th mat-header-cell *matHeaderCellDef>Pulseras</th>
+        <td mat-cell *matCellDef="let r">{{ r.wristbandsQuantity }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalCost">
+        <th mat-header-cell *matHeaderCellDef>Total</th>
+        <td mat-cell *matCellDef="let r">{{ r.totalCost | currency: r.currency }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estatus</th>
+        <td mat-cell *matCellDef="let r">
+          <mat-chip [class.chip--cancelled]="r.status === 'Cancelled'">
+            {{ r.status === 'Cancelled' ? 'Cancelado' : 'Vigente' }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let r">{{ r.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let r">
+          <a
+            mat-icon-button
+            [routerLink]="['/admin/receipts', r.id]"
+            matTooltip="Ver / imprimir recibo"
+          >
+            <mat-icon>visibility</mat-icon>
+          </a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  }
+</div>

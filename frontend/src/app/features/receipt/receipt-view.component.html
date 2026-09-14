@@ -1,0 +1,112 @@
+<div class="receipt-page">
+
+  <!-- Barra de acciones: se oculta por completo al imprimir (ver @media print) -->
+  <div class="toolbar no-print">
+    <a mat-stroked-button routerLink="/admin/receipts/new">
+      <mat-icon>arrow_back</mat-icon>
+      Nuevo recibo
+    </a>
+    <button mat-flat-button color="primary" (click)="print()" [disabled]="isLoading() || !receipt()">
+      <mat-icon>print</mat-icon>
+      Imprimir recibo
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-container no-print">
+      <mat-spinner diameter="40" />
+      <p>Cargando recibo…</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-container no-print">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  } @else if (receipt(); as r) {
+
+    @if (isCancelled()) {
+      <div class="cancelled-banner no-print" role="alert">
+        <mat-icon>block</mat-icon>
+        Este recibo fue cancelado. No es válido para el canje de pulseras.
+      </div>
+    }
+
+    <!-- Dos tarjetas idénticas: Original y Copia (ICAP Juvenil) -->
+    <div class="cards-wrapper">
+      @for (copy of copies; track copy) {
+        <section class="receipt-card" [class.cancelled]="isCancelled()">
+
+          <header class="card-header">
+            <div class="brand">
+              <h2>ICAP Juvenil</h2>
+              <span class="subtitle">Recibo de compra de pulseras</span>
+            </div>
+            <mat-chip class="copy-chip" [class.copy-chip--copy]="copy === 'Copia'">
+              {{ copy }}
+            </mat-chip>
+          </header>
+
+          <div class="card-body">
+            <div class="details">
+              <div class="detail-row">
+                <span class="label">Folio</span>
+                <span class="value folio">{{ r.folioNumber }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Fecha de emisión</span>
+                <span class="value">{{ r.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Delegado</span>
+                <span class="value">{{ r.delegateName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Área / Región</span>
+                <span class="value">{{ r.areaOrRegion }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Cantidad de pulseras</span>
+                <span class="value">{{ r.wristbandsQuantity }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Precio unitario</span>
+                <span class="value">{{ r.unitPrice | currency: r.currency }}</span>
+              </div>
+              <div class="detail-row total-row">
+                <span class="label">Total</span>
+                <span class="value total">{{ r.totalCost | currency: r.currency }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Estatus</span>
+                <span class="value status" [class.status--cancelled]="isCancelled()">
+                  {{ isCancelled() ? 'Cancelado' : 'Vigente' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="qr-block">
+              <qrcode
+                [qrdata]="r.qrHash"
+                [width]="140"
+                [errorCorrectionLevel]="'M'"
+                [elementType]="'svg'"
+              />
+              <span class="qr-caption">Folio {{ r.folioNumber }}</span>
+            </div>
+          </div>
+
+          <footer class="signatures">
+            <div class="signature-slot">
+              <div class="signature-line"></div>
+              <span>Firma del delegado</span>
+            </div>
+            <div class="signature-slot">
+              <div class="signature-line"></div>
+              <span>Firma ICAP Juvenil</span>
+            </div>
+          </footer>
+        </section>
+      }
+    </div>
+  }
+</div>

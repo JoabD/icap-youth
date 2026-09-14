@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Icap.Domain</RootNamespace>
+    <AssemblyName>Icap.Domain</AssemblyName>
+  </PropertyGroup>
+
+  <!--
+    Domain Layer: NO debe tener dependencias a frameworks externos
+    (ni MongoDB.Driver, ni ASP.NET Core, ni MediatR).
+    Solo BCL de .NET puro. Esto garantiza Clean Architecture real.
+  -->
+
+</Project>

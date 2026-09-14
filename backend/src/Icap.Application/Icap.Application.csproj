@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Icap.Application</RootNamespace>
+    <AssemblyName>Icap.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CQRS mediante MediatR: separa Commands (escritura) de Queries (lectura) -->
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <!-- Validación de Commands/Queries desacoplada de los Handlers -->
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Icap.Domain\Icap.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
