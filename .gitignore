@@ -1,0 +1,18 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/appsettings.Production.json
+backend/**/appsettings.*.local.json
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE / OS
+.vs/
+.idea/
+*.user
+*.pubxml.user
+.DS_Store
+Thumbs.db

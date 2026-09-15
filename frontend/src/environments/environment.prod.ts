@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.icapjuvenil.org/api/v1',
+  apiUrl: 'https://icapjuvenil-api.runasp.net/api/v1',
 };
