@@ -28,9 +28,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(AngularCorsPolicy, policy =>
     {
+        // AllowAnyOrigin() a propósito (decisión explícita, no un descuido):
+        // la autenticación de esta API es JWT Bearer por header, no cookies de
+        // sesión, así que no hay riesgo de CSRF y AllowAnyOrigin + AllowCredentials()
+        // ni siquiera sería una combinación válida en ASP.NET Core. Se eligió así
+        // para no tener que mantener a mano cada URL de preview de Vercel
+        // (cambian por branch/PR); el trade-off es que un token JWT robado se
+        // podría usar desde cualquier origen, ya que no hay una lista de dominios
+        // que lo mitigue.
         policy
-            .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-                         ?? new[] { "http://localhost:4200" })
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
