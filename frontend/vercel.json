@@ -1,0 +1,6 @@
+{
+  "outputDirectory": "dist/icap-juvenil-frontend/browser",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
