@@ -14,6 +14,7 @@ public static class ReceiptDtoMapper
         FolioNumber: receipt.FolioNumber,
         DelegateName: receipt.DelegateInfo.DelegateName,
         AreaOrRegion: receipt.DelegateInfo.AreaOrRegion,
+        DelegateEmail: receipt.DelegateInfo.Email?.Value,
         WristbandsQuantity: receipt.PurchaseDetails.WristbandsQuantity,
         UnitPrice: receipt.PurchaseDetails.UnitPrice.Amount,
         TotalCost: receipt.PurchaseDetails.TotalCost.Amount,

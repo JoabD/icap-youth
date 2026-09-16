@@ -15,7 +15,7 @@ public class CancelReceiptCommandHandlerTests
     private CancelReceiptCommandHandler CreateHandler() => new(_receiptRepository.Object);
 
     private static Receipt IssueValidReceipt() => Receipt.Issue(
-        "receipt-1", "ICAP-000001", "Juan Pérez", "Zona Norte", 5, Money.Of(50m), "qr-hash", "user-1");
+        "receipt-1", "ICAP-000001", "Juan Pérez", "Zona Norte", "juan@example.com", 5, Money.Of(50m), "qr-hash", "user-1");
 
     [Fact]
     public async Task Handle_WithExistingIssuedReceipt_CancelsAndPersistsIt()

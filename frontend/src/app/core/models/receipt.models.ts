@@ -4,6 +4,7 @@ export interface Receipt {
   folioNumber: string;
   delegateName: string;
   areaOrRegion: string;
+  delegateEmail: string | null;
   wristbandsQuantity: number;
   unitPrice: number;
   totalCost: number;
@@ -18,6 +19,7 @@ export interface Receipt {
 export interface CreateReceiptRequest {
   delegateName: string;
   areaOrRegion: string;
+  delegateEmail: string;
   wristbandsQuantity: number;
   unitPrice: number;
 }

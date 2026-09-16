@@ -16,11 +16,31 @@
     <!-- Generación/validación de JWT -->
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <!-- Generación de PDF (recibo estilo factura). Community License: gratis para
+         organizaciones sin fines de lucro y negocios con ingresos anuales menores
+         a USD 1,000,000 (ver QuestPdfReceiptGenerator, donde se declara la licencia). -->
+    <PackageReference Include="QuestPDF" Version="2026.2.2" />
+    <!-- Generación del QR embebido en el PDF (MIT, sin dependencias externas). -->
+    <PackageReference Include="QRCoder" Version="1.8.0" />
+    <!-- Envío de correo (SMTP). Gratis con cualquier cuenta de Gmail + App Password. -->
+    <PackageReference Include="MailKit" Version="4.17.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Icap.Domain\Icap.Domain.csproj" />
     <ProjectReference Include="..\Icap.Application\Icap.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Logo de la Sociedad Juvenil Amigos de Cristo, embebido en el ensamblado
+         (no un archivo suelto) para que siempre esté disponible sin importar
+         cómo se publique/copie el output en el hosting. -->
+    <EmbeddedResource Include="Assets\logo-sociedad-juvenil.png" />
+    <!-- Firma pre-autorizada de ICAP Juvenil, embebida por la misma razón que
+         el logo. Es un sello visual (no una firma digital/criptográfica): la
+         validez real del recibo la da el QR + QRHash firmado con HMAC, esto
+         solo evita que el delegado tenga que firmar cada recibo a mano. -->
+    <EmbeddedResource Include="Assets\signature-icap.png" />
   </ItemGroup>
 
 </Project>

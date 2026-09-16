@@ -1,8 +1,10 @@
 using Icap.Application.Common.Interfaces;
 using Icap.Application.Receipts.Commands.CancelReceipt;
 using Icap.Application.Receipts.Commands.CreateReceipt;
+using Icap.Application.Receipts.Commands.SendReceiptEmail;
 using Icap.Application.Receipts.DTOs;
 using Icap.Application.Receipts.Queries.GetReceiptById;
+using Icap.Application.Receipts.Queries.GetReceiptPdf;
 using Icap.Application.Receipts.Queries.GetReceipts;
 using Icap.Domain.Enums;
 using MediatR;
@@ -52,6 +54,27 @@ public sealed class ReceiptsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>Descarga el recibo como PDF estilo factura (mismo documento que se envía por correo).</summary>
+    [HttpGet("{id}/pdf")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPdf(string id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetReceiptPdfQuery(id), cancellationToken);
+        return File(result.Content, "application/pdf", result.FileName);
+    }
+
+    /// <summary>Reenvía el PDF del recibo al correo del delegado (con copia administrativa). Al crear un recibo ya se envía automáticamente; esto es para reenviar si falló o si se necesita otra vez.</summary>
+    [HttpPost("{id}/send-email")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> SendEmail(string id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new SendReceiptEmailCommand(id), cancellationToken);
+        return NoContent();
+    }
+
     /// <summary>Emite un nuevo recibo. CreatedByUserId siempre se toma del JWT, nunca del body.</summary>
     [HttpPost]
     [ProducesResponseType(typeof(ReceiptDto), StatusCodes.Status201Created)]
@@ -61,6 +84,7 @@ public sealed class ReceiptsController : ControllerBase
         var command = new CreateReceiptCommand(
             request.DelegateName,
             request.AreaOrRegion,
+            request.DelegateEmail,
             request.WristbandsQuantity,
             request.UnitPrice,
             _currentUser.UserId!);
@@ -89,5 +113,6 @@ public sealed class ReceiptsController : ControllerBase
 public sealed record CreateReceiptRequest(
     string DelegateName,
     string AreaOrRegion,
+    string DelegateEmail,
     int WristbandsQuantity,
     decimal UnitPrice);

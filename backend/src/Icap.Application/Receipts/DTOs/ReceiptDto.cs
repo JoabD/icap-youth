@@ -6,6 +6,7 @@ public sealed record ReceiptDto(
     string FolioNumber,
     string DelegateName,
     string AreaOrRegion,
+    string? DelegateEmail,
     int WristbandsQuantity,
     decimal UnitPrice,
     decimal TotalCost,

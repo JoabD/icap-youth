@@ -14,6 +14,10 @@ public sealed class CreateReceiptCommandValidator : AbstractValidator<CreateRece
             .NotEmpty().WithMessage("El área o región es requerida.")
             .MaximumLength(100);
 
+        RuleFor(x => x.DelegateEmail)
+            .NotEmpty().WithMessage("El correo del delegado es requerido para poder enviarle el recibo.")
+            .EmailAddress().WithMessage("El correo del delegado no tiene un formato válido.");
+
         RuleFor(x => x.WristbandsQuantity)
             .GreaterThan(0).WithMessage("La cantidad de pulseras debe ser mayor a cero.")
             .LessThanOrEqualTo(1000).WithMessage("La cantidad de pulseras excede el máximo permitido por recibo.");

@@ -11,6 +11,7 @@ internal static class ReceiptMapper
         folioNumber: document.FolioNumber,
         delegateName: document.DelegateInfo.DelegateName,
         areaOrRegion: document.DelegateInfo.AreaOrRegion,
+        delegateEmail: document.DelegateInfo.Email,
         wristbandsQuantity: document.PurchaseDetails.WristbandsQuantity,
         unitPriceAmount: document.PurchaseDetails.UnitPriceAmount,
         currency: document.PurchaseDetails.UnitPriceCurrency,
@@ -27,6 +28,7 @@ internal static class ReceiptMapper
         {
             DelegateName = receipt.DelegateInfo.DelegateName,
             AreaOrRegion = receipt.DelegateInfo.AreaOrRegion,
+            Email = receipt.DelegateInfo.Email?.Value,
         },
         PurchaseDetails = new PurchaseDetailsDocument
         {

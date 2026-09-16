@@ -14,6 +14,7 @@ public class ReceiptTests
             folioNumber: "ICAP-000001",
             delegateName: "María García",
             areaOrRegion: "Zona Norte",
+            delegateEmail: "maria@example.com",
             wristbandsQuantity: quantity,
             unitPrice: Money.Of(unitPrice),
             qrHash: "qr-hash-123",
@@ -64,7 +65,7 @@ public class ReceiptTests
     public void Issue_WithoutCreatedBy_ThrowsDomainException()
     {
         Assert.Throws<DomainException>(() => Receipt.Issue(
-            "receipt-1", "ICAP-000001", "María García", "Zona Norte", 10, Money.Of(50m), "qr-hash", createdBy: " "));
+            "receipt-1", "ICAP-000001", "María García", "Zona Norte", "maria@example.com", 10, Money.Of(50m), "qr-hash", createdBy: " "));
     }
 
     [Fact]
@@ -95,6 +96,7 @@ public class ReceiptTests
             folioNumber: "ICAP-000002",
             delegateName: "Luis Torres",
             areaOrRegion: "Zona Sur",
+            delegateEmail: "luis@example.com",
             wristbandsQuantity: 5,
             unitPriceAmount: 60m,
             currency: "MXN",

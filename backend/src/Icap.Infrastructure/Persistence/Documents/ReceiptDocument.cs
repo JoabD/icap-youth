@@ -47,6 +47,13 @@ public sealed class DelegateInfoDocument
 
     [BsonElement("AreaOrRegion")]
     public string AreaOrRegion { get; set; } = default!;
+
+    // Nullable a propósito: recibos emitidos antes de este campo no lo
+    // tienen en Mongo. BsonIgnoreExtraElements no ayuda con campos
+    // FALTANTES (solo con sobrantes), así que el default null es lo que
+    // evita que la deserialización truene con documentos viejos.
+    [BsonElement("Email")]
+    public string? Email { get; set; }
 }
 
 [BsonIgnoreExtraElements]

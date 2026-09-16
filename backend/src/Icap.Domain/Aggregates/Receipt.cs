@@ -53,6 +53,7 @@ public sealed class Receipt : Entity<string>, IAggregateRoot
         string folioNumber,
         string delegateName,
         string areaOrRegion,
+        string delegateEmail,
         int wristbandsQuantity,
         Money unitPrice,
         string qrHash,
@@ -67,7 +68,7 @@ public sealed class Receipt : Entity<string>, IAggregateRoot
         if (string.IsNullOrWhiteSpace(createdBy))
             throw new DomainException("El recibo debe indicar quién lo generó (CreatedBy).");
 
-        var delegateInfo = DelegateInfo.Create(delegateName, areaOrRegion);
+        var delegateInfo = DelegateInfo.Create(delegateName, areaOrRegion, delegateEmail);
         var purchaseDetails = PurchaseDetails.Create(wristbandsQuantity, unitPrice);
         var validation = ReceiptValidation.Create(qrHash);
 
@@ -91,6 +92,7 @@ public sealed class Receipt : Entity<string>, IAggregateRoot
         string folioNumber,
         string delegateName,
         string areaOrRegion,
+        string delegateEmail,
         int wristbandsQuantity,
         decimal unitPriceAmount,
         string currency,
@@ -100,7 +102,7 @@ public sealed class Receipt : Entity<string>, IAggregateRoot
         string createdBy)
     {
         var unitPrice = Money.Of(unitPriceAmount, currency);
-        var delegateInfo = DelegateInfo.Create(delegateName, areaOrRegion);
+        var delegateInfo = DelegateInfo.Create(delegateName, areaOrRegion, delegateEmail);
         var purchaseDetails = PurchaseDetails.Create(wristbandsQuantity, unitPrice);
         var validation = ReceiptValidation.Create(qrHash);
 

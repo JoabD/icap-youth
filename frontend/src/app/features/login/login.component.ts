@@ -1,81 +1,55 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { AuthService } from '../../core/services/auth.service';
+import { LoginFormComponent } from './login-form.component';
 
 /**
- * Pantalla de acceso para Administradores y Delegados.
- * Standalone, sin NgModule, con inject() para DI y Signals para el estado
- * local (loading / errorMessage / hidePassword), reservando RxJS únicamente
- * para la llamada HTTP de login (delegada en AuthService).
+ * Página completa de acceso en "/login". Sigue existiendo (además del modal
+ * que abre "Acceder" en la landing) porque authGuard redirige aquí a
+ * cualquiera que intente entrar a "/admin/*" sin sesión — ese caso necesita
+ * una URL real a la que redirigir, no un modal.
  */
 @Component({
   selector: 'icap-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  imports: [MatCardModule, LoginFormComponent],
+  template: `
+    <div class="login-page">
+      <mat-card class="login-card">
+        <mat-card-header>
+          <mat-card-title>ICAP Juvenil</mat-card-title>
+          <mat-card-subtitle>Acceso para delegados y administradores</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <icap-login-form (success)="onSuccess()" />
+        </mat-card-content>
+      </mat-card>
+    </div>
+  `,
+  styles: `
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+      padding: 16px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      padding: 8px 8px 16px;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly isLoading = signal(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly hidePassword = signal(true);
-
-  readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
-
-  togglePasswordVisibility(): void {
-    this.hidePassword.update((hidden) => !hidden);
-  }
-
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    const { email, password } = this.form.getRawValue();
-
-    this.authService.login({ email, password }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.router.navigate(['/admin']);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(
-          error.status === 401
-            ? 'Correo o contraseña incorrectos.'
-            : 'No se pudo iniciar sesión. Intenta de nuevo más tarde.',
-        );
-      },
-    });
+  onSuccess(): void {
+    this.router.navigate(['/admin']);
   }
 }

@@ -16,8 +16,10 @@ namespace Icap.Infrastructure.Persistence;
 ///
 /// Credenciales de ejemplo (SOLO para desarrollo/demo — cámbialas o borra
 /// este seed antes de ir a producción):
-///   Admin:    admin@icapjuvenil.org    / Admin123!
-///   Delegado: delegado@icapjuvenil.org / Delegado123!
+///   Admin:       admin@icapjuvenil.org    / Admin123!
+///   Delegado:    delegado@icapjuvenil.org / Delegado123!
+///   Super Admin: joabdgtz@gmail.com       / IcapAdmin2026! (cámbiala de inmediato con
+///                POST /api/v1/users/{id}/password una vez que inicies sesión)
 /// </summary>
 public static class DbSeeder
 {
@@ -25,6 +27,8 @@ public static class DbSeeder
     public const string SeedAdminPassword = "Admin123!";
     public const string SeedDelegateEmail = "delegado@icapjuvenil.org";
     public const string SeedDelegatePassword = "Delegado123!";
+    public const string SeedSuperAdminEmail = "joabdgtz@gmail.com";
+    public const string SeedSuperAdminPassword = "IcapAdmin2026!";
 
     public static async Task SeedAsync(
         IMongoDbContext context,
@@ -55,14 +59,22 @@ public static class DbSeeder
             passwordHash: passwordHasher.Hash(SeedDelegatePassword),
             role: UserRole.Delegate);
 
+        var superAdmin = User.Create(
+            id: ObjectId.GenerateNewId().ToString(),
+            fullName: "Joab David Gutierrez",
+            email: SeedSuperAdminEmail,
+            passwordHash: passwordHasher.Hash(SeedSuperAdminPassword),
+            role: UserRole.Admin);
+
         await context.Users.InsertManyAsync(
-            new[] { admin.ToDocument(), demoDelegate.ToDocument() },
+            new[] { admin.ToDocument(), demoDelegate.ToDocument(), superAdmin.ToDocument() },
             cancellationToken: cancellationToken);
 
         logger.LogWarning(
-            "Seed inicial aplicado: se crearon los usuarios de ejemplo '{AdminEmail}' y '{DelegateEmail}'. " +
+            "Seed inicial aplicado: se crearon los usuarios de ejemplo '{AdminEmail}', '{DelegateEmail}' y '{SuperAdminEmail}'. " +
             "Cambia sus contraseñas o elimina el seed antes de producción.",
             SeedAdminEmail,
-            SeedDelegateEmail);
+            SeedDelegateEmail,
+            SeedSuperAdminEmail);
     }
 }

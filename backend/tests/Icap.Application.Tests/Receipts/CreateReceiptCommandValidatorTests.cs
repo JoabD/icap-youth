@@ -10,6 +10,7 @@ public class CreateReceiptCommandValidatorTests
     private static CreateReceiptCommand ValidCommand() => new(
         DelegateName: "Juan Pérez",
         AreaOrRegion: "Zona Norte",
+        DelegateEmail: "juan.perez@example.com",
         WristbandsQuantity: 5,
         UnitPrice: 50m,
         CreatedByUserId: "user-1");
@@ -66,5 +67,18 @@ public class CreateReceiptCommandValidatorTests
         var result = _validator.Validate(command);
 
         Assert.False(result.IsValid);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("no-es-un-correo")]
+    public void Validate_WithInvalidDelegateEmail_HasError(string email)
+    {
+        var command = ValidCommand() with { DelegateEmail = email };
+
+        var result = _validator.Validate(command);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(CreateReceiptCommand.DelegateEmail));
     }
 }

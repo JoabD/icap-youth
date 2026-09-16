@@ -24,4 +24,14 @@ export class ReceiptService {
   cancel(id: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/cancel`, {});
   }
+
+  /** Descarga el PDF del recibo como Blob (el componente se encarga de disparar la descarga en el navegador). */
+  downloadPdf(id: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${id}/pdf`, { responseType: 'blob' });
+  }
+
+  /** Reenvía el PDF del recibo al correo del delegado (con copia administrativa, ver backend EmailSettings). */
+  sendEmail(id: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/send-email`, {});
+  }
 }

@@ -12,6 +12,7 @@ namespace Icap.Application.Receipts.Commands.CreateReceipt;
 public sealed record CreateReceiptCommand(
     string DelegateName,
     string AreaOrRegion,
+    string DelegateEmail,
     int WristbandsQuantity,
     decimal UnitPrice,
     string CreatedByUserId) : IRequest<ReceiptDto>;

@@ -18,7 +18,7 @@ public class GetReceiptByIdQueryHandlerTests
     public async Task Handle_WithExistingReceipt_ReturnsMappedDto()
     {
         var receipt = Receipt.Issue(
-            "receipt-1", "ICAP-000001", "Juan Pérez", "Zona Norte", 3, Money.Of(80m), "qr-hash", "user-1");
+            "receipt-1", "ICAP-000001", "Juan Pérez", "Zona Norte", "juan@example.com", 3, Money.Of(80m), "qr-hash", "user-1");
 
         _receiptRepository.Setup(r => r.GetByIdAsync(receipt.Id, It.IsAny<CancellationToken>())).ReturnsAsync(receipt);
 

@@ -25,15 +25,37 @@
   color: #616161;
 }
 
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  -webkit-overflow-scrolling: touch;
+}
+
 .receipts-table {
   width: 100%;
+  min-width: 720px;
   background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .chip--cancelled {
   background: #ffebee !important;
   color: #b71c1c !important;
+}
+
+@media (max-width: 600px) {
+  .list-page {
+    padding: 16px 12px 32px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    a {
+      width: 100%;
+    }
+  }
 }

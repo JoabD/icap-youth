@@ -4,6 +4,7 @@ using Icap.Domain.Aggregates;
 using Icap.Domain.Enums;
 using Icap.Domain.Repositories;
 using Icap.Domain.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -15,12 +16,18 @@ public class CreateReceiptCommandHandlerTests
     private readonly Mock<IUserRepository> _userRepository = new();
     private readonly Mock<IFolioNumberGenerator> _folioNumberGenerator = new();
     private readonly Mock<IQrHashGenerator> _qrHashGenerator = new();
+    private readonly Mock<IReceiptPdfGenerator> _pdfGenerator = new();
+    private readonly Mock<IEmailSender> _emailSender = new();
+    private readonly Mock<ILogger<CreateReceiptCommandHandler>> _logger = new();
 
     private CreateReceiptCommandHandler CreateHandler() => new(
         _receiptRepository.Object,
         _userRepository.Object,
         _folioNumberGenerator.Object,
-        _qrHashGenerator.Object);
+        _qrHashGenerator.Object,
+        _pdfGenerator.Object,
+        _emailSender.Object,
+        _logger.Object);
 
     private static User CreateActiveDelegate() =>
         User.Create("user-1", "Juan Pérez", "juan@icapjuvenil.org", "hash", UserRole.Delegate);
@@ -36,6 +43,7 @@ public class CreateReceiptCommandHandlerTests
         var command = new CreateReceiptCommand(
             DelegateName: "Juan Pérez",
             AreaOrRegion: "Zona Norte",
+            DelegateEmail: "juan.delegado@example.com",
             WristbandsQuantity: 4,
             UnitPrice: 75m,
             CreatedByUserId: user.Id);
@@ -60,7 +68,7 @@ public class CreateReceiptCommandHandlerTests
             .Setup(r => r.GetByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
 
-        var command = new CreateReceiptCommand("Juan Pérez", "Zona Norte", 4, 75m, "usuario-inexistente");
+        var command = new CreateReceiptCommand("Juan Pérez", "Zona Norte", "juan.delegado@example.com", 4, 75m, "usuario-inexistente");
 
         await Assert.ThrowsAsync<NotFoundException>(() => CreateHandler().Handle(command, CancellationToken.None));
 
@@ -74,7 +82,7 @@ public class CreateReceiptCommandHandlerTests
         user.Deactivate();
         _userRepository.Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>())).ReturnsAsync(user);
 
-        var command = new CreateReceiptCommand("Juan Pérez", "Zona Norte", 4, 75m, user.Id);
+        var command = new CreateReceiptCommand("Juan Pérez", "Zona Norte", "juan.delegado@example.com", 4, 75m, user.Id);
 
         await Assert.ThrowsAsync<Icap.Domain.Exceptions.DomainException>(() =>
             CreateHandler().Handle(command, CancellationToken.None));

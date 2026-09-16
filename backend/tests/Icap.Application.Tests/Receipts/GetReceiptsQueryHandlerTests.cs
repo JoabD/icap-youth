@@ -14,7 +14,7 @@ public class GetReceiptsQueryHandlerTests
     private GetReceiptsQueryHandler CreateHandler() => new(_receiptRepository.Object);
 
     private static Receipt IssueReceipt(string id, string createdBy) => Receipt.Issue(
-        id, $"ICAP-{id}", "Juan Pérez", "Zona Norte", 2, Money.Of(50m), "qr-hash", createdBy);
+        id, $"ICAP-{id}", "Juan Pérez", "Zona Norte", "juan@example.com", 2, Money.Of(50m), "qr-hash", createdBy);
 
     [Fact]
     public async Task Handle_WithoutCreatedByFilter_ReturnsAllReceipts()

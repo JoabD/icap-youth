@@ -1,5 +1,7 @@
 using Icap.Domain.Repositories;
 using Icap.Domain.Services;
+using Icap.Infrastructure.Email;
+using Icap.Infrastructure.Pdf;
 using Icap.Infrastructure.Persistence;
 using Icap.Infrastructure.Persistence.Repositories;
 using Icap.Infrastructure.Persistence.Settings;
@@ -20,6 +22,7 @@ public static class DependencyInjection
     {
         services.Configure<MongoDbSettings>(configuration.GetSection(MongoDbSettings.SectionName));
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
 
         services.AddSingleton<IMongoDbContext, MongoDbContext>();
 
@@ -30,6 +33,8 @@ public static class DependencyInjection
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IQrHashGenerator, QrHashGenerator>();
         services.AddScoped<IFolioNumberGenerator, FolioNumberGenerator>();
+        services.AddSingleton<IReceiptPdfGenerator, QuestPdfReceiptGenerator>();
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
 
         return services;
     }

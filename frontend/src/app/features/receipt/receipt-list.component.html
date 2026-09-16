@@ -23,6 +23,7 @@
       <p>Aún no se han emitido recibos.</p>
     </div>
   } @else {
+    <div class="table-scroll">
     <table mat-table [dataSource]="receipts()" class="receipts-table">
       <ng-container matColumnDef="folioNumber">
         <th mat-header-cell *matHeaderCellDef>Folio</th>
@@ -79,5 +80,6 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    </div>
   }
 </div>

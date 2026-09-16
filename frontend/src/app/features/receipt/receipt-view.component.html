@@ -2,14 +2,33 @@
 
   <!-- Barra de acciones: se oculta por completo al imprimir (ver @media print) -->
   <div class="toolbar no-print">
-    <a mat-stroked-button routerLink="/admin/receipts/new">
+    <a mat-stroked-button routerLink="/admin/receipts">
       <mat-icon>arrow_back</mat-icon>
-      Nuevo recibo
+      Volver
     </a>
-    <button mat-flat-button color="primary" (click)="print()" [disabled]="isLoading() || !receipt()">
-      <mat-icon>print</mat-icon>
-      Imprimir recibo
-    </button>
+
+    <div class="toolbar-actions">
+      <button mat-stroked-button (click)="downloadPdf()" [disabled]="isLoading() || !receipt() || isDownloading()">
+        @if (isDownloading()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          <mat-icon>download</mat-icon>
+        }
+        Descargar PDF
+      </button>
+      <button mat-stroked-button (click)="resendEmail()" [disabled]="isLoading() || !receipt() || isSendingEmail() || !receipt()?.delegateEmail">
+        @if (isSendingEmail()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          <mat-icon>mail</mat-icon>
+        }
+        Reenviar por correo
+      </button>
+      <button mat-flat-button color="primary" (click)="print()" [disabled]="isLoading() || !receipt()">
+        <mat-icon>print</mat-icon>
+        Imprimir
+      </button>
+    </div>
   </div>
 
   @if (isLoading()) {
@@ -31,82 +50,86 @@
       </div>
     }
 
-    <!-- Dos tarjetas idénticas: Original y Copia (ICAP Juvenil) -->
-    <div class="cards-wrapper">
-      @for (copy of copies; track copy) {
-        <section class="receipt-card" [class.cancelled]="isCancelled()">
+    <!-- Documento estilo factura: el mismo diseño que el PDF generado en backend -->
+    <section class="invoice" [class.cancelled]="isCancelled()">
 
-          <header class="card-header">
-            <div class="brand">
-              <h2>ICAP Juvenil</h2>
-              <span class="subtitle">Recibo de compra de pulseras</span>
-            </div>
-            <mat-chip class="copy-chip" [class.copy-chip--copy]="copy === 'Copia'">
-              {{ copy }}
-            </mat-chip>
-          </header>
-
-          <div class="card-body">
-            <div class="details">
-              <div class="detail-row">
-                <span class="label">Folio</span>
-                <span class="value folio">{{ r.folioNumber }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Fecha de emisión</span>
-                <span class="value">{{ r.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Delegado</span>
-                <span class="value">{{ r.delegateName }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Área / Región</span>
-                <span class="value">{{ r.areaOrRegion }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Cantidad de pulseras</span>
-                <span class="value">{{ r.wristbandsQuantity }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Precio unitario</span>
-                <span class="value">{{ r.unitPrice | currency: r.currency }}</span>
-              </div>
-              <div class="detail-row total-row">
-                <span class="label">Total</span>
-                <span class="value total">{{ r.totalCost | currency: r.currency }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Estatus</span>
-                <span class="value status" [class.status--cancelled]="isCancelled()">
-                  {{ isCancelled() ? 'Cancelado' : 'Vigente' }}
-                </span>
-              </div>
-            </div>
-
-            <div class="qr-block">
-              <qrcode
-                [qrdata]="r.qrHash"
-                [width]="140"
-                [errorCorrectionLevel]="'M'"
-                [elementType]="'svg'"
-              />
-              <span class="qr-caption">Folio {{ r.folioNumber }}</span>
-            </div>
+      <header class="invoice-header">
+        <div class="brand">
+          <img src="assets/logo-sociedad-juvenil.png" alt="Sociedad Juvenil Amigos de Cristo" class="logo" />
+          <div class="brand-text">
+            <h2>{{ certifierName }}</h2>
+            <span class="concept">{{ concept }}</span>
           </div>
+        </div>
 
-          <footer class="signatures">
-            <div class="signature-slot">
-              <div class="signature-line"></div>
-              <span>Firma del delegado</span>
-            </div>
-            <div class="signature-slot">
-              <div class="signature-line"></div>
-              <span>Firma ICAP Juvenil</span>
-            </div>
-          </footer>
-        </section>
-      }
-    </div>
+        <div class="invoice-meta">
+          <h1>Recibo {{ r.folioNumber }}</h1>
+          <span class="date">{{ r.createdAt | date: "dd 'de' MMMM 'de' yyyy, HH:mm" }}</span>
+          <mat-chip class="status-chip" [class.status-chip--cancelled]="isCancelled()">
+            {{ isCancelled() ? 'CANCELADO' : 'VÁLIDO' }}
+          </mat-chip>
+        </div>
+      </header>
+
+      <section class="bill-to">
+        <div class="field">
+          <span class="label">Delegado</span>
+          <span class="value">{{ r.delegateName }}</span>
+        </div>
+        <div class="field">
+          <span class="label">Área / Región</span>
+          <span class="value">{{ r.areaOrRegion }}</span>
+        </div>
+        <div class="field">
+          <span class="label">Correo</span>
+          <span class="value">{{ r.delegateEmail ?? '—' }}</span>
+        </div>
+      </section>
+
+      <div class="table-scroll">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="col-concept">Concepto</th>
+              <th class="col-qty">Cant.</th>
+              <th class="col-price">Precio unitario</th>
+              <th class="col-amount">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-concept">{{ concept }}</td>
+              <td class="col-qty">{{ r.wristbandsQuantity }}</td>
+              <td class="col-price">{{ r.unitPrice | currency: r.currency }}</td>
+              <td class="col-amount">{{ r.totalCost | currency: r.currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="totals">
+        <span class="total-label">Total</span>
+        <span class="total-value">{{ r.totalCost | currency: r.currency }}</span>
+      </div>
+
+      <footer class="invoice-footer">
+        <div class="signatures">
+          <div class="signature-slot">
+            <div class="signature-line"></div>
+            <span>Firma del delegado</span>
+          </div>
+          <div class="signature-slot">
+            <img src="assets/signature-icap.png" alt="Firma autorizada — ICAP Juvenil" class="signature-img" />
+            <div class="signature-line"></div>
+            <span>Sello / Autorización ICAP</span>
+          </div>
+        </div>
+
+        <div class="qr-block">
+          <qrcode [qrdata]="r.qrHash" [width]="120" [errorCorrectionLevel]="'M'" [elementType]="'svg'" />
+          <span class="qr-caption">Código de validación</span>
+        </div>
+      </footer>
+    </section>
   }
 </div>

@@ -84,6 +84,22 @@ public sealed class User : Entity<string>, IAggregateRoot
         return user;
     }
 
+    /// <summary>
+    /// Actualiza los datos editables de perfil (todo lo demás — contraseña,
+    /// rol, estado activo/inactivo — tiene su propio método dedicado con su
+    /// propia regla de negocio, para no mezclar invariantes distintas aquí).
+    /// </summary>
+    public void UpdateProfile(string fullName, string email)
+    {
+        if (string.IsNullOrWhiteSpace(fullName))
+            throw new DomainException("El nombre completo (FullName) es requerido.");
+
+        FullName = fullName.Trim();
+        Email = Email.Of(email);
+    }
+
+    public void ChangeRole(UserRole role) => Role = role;
+
     public void Deactivate()
     {
         if (!IsActive)

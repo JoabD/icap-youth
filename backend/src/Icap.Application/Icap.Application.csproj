@@ -13,6 +13,10 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <!-- Validación de Commands/Queries desacoplada de los Handlers -->
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <!-- Solo el contrato ILogger<T> (sin ningún provider concreto), para poder
+         loguear el best-effort de envío de correo en CreateReceiptCommandHandler
+         sin acoplar Application a ASP.NET Core. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
